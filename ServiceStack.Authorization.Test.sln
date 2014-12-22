@@ -1,0 +1,51 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceStack.Authorization.Test.V21", "tests\ServiceStack.Authorization.Test.V21\ServiceStack.Authorization.Test.V21.csproj", "{2A54A2DB-CA97-40EE-BB90-A0DD412A4606}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceStack.Authorization.Test.Latest", "tests\ServiceStack.Authorization.Test.Latest\ServiceStack.Authorization.Test.Latest.csproj", "{44C442AE-05A4-4312-9EE6-36C3AF21B8EB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "0 - NuGet", "0 - NuGet", "{A1F24F90-75E7-4FC3-A4DB-8118D080403C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1 - Resources", "1 - Resources", "{EF2BE8B2-8CD7-418A-9F41-D25F09EB4833}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2 - Sources", "2 - Sources", "{682A5D53-08E4-4770-ADDF-F51D305D5C02}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3 - Tests", "3 - Tests", "{E916E8E8-2793-46EE-AF92-26E140F955EA}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "ServiceStack.Authorization.TestCore", "tests\ServiceStack.Authorization.TestCore\ServiceStack.Authorization.TestCore.shproj", "{EF169C09-C2BF-4769-B8BD-4C0AB0A35EA2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{3B0A20EC-A0C0-41ED-9F87-69923FBB0DC4}"
+EndProject
+Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		tests\ServiceStack.Authorization.TestCore\ServiceStack.Authorization.TestCore.projitems*{2a54a2db-ca97-40ee-bb90-a0dd412a4606}*SharedItemsImports = 4
+		tests\ServiceStack.Authorization.TestCore\ServiceStack.Authorization.TestCore.projitems*{ef169c09-c2bf-4769-b8bd-4c0ab0a35ea2}*SharedItemsImports = 13
+		tests\ServiceStack.Authorization.TestCore\ServiceStack.Authorization.TestCore.projitems*{44c442ae-05a4-4312-9ee6-36c3af21b8eb}*SharedItemsImports = 4
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2A54A2DB-CA97-40EE-BB90-A0DD412A4606}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A54A2DB-CA97-40EE-BB90-A0DD412A4606}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A54A2DB-CA97-40EE-BB90-A0DD412A4606}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A54A2DB-CA97-40EE-BB90-A0DD412A4606}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44C442AE-05A4-4312-9EE6-36C3AF21B8EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44C442AE-05A4-4312-9EE6-36C3AF21B8EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44C442AE-05A4-4312-9EE6-36C3AF21B8EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44C442AE-05A4-4312-9EE6-36C3AF21B8EB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2A54A2DB-CA97-40EE-BB90-A0DD412A4606} = {E916E8E8-2793-46EE-AF92-26E140F955EA}
+		{44C442AE-05A4-4312-9EE6-36C3AF21B8EB} = {E916E8E8-2793-46EE-AF92-26E140F955EA}
+		{EF169C09-C2BF-4769-B8BD-4C0AB0A35EA2} = {3B0A20EC-A0C0-41ED-9F87-69923FBB0DC4}
+		{3B0A20EC-A0C0-41ED-9F87-69923FBB0DC4} = {E916E8E8-2793-46EE-AF92-26E140F955EA}
+	EndGlobalSection
+EndGlobal
