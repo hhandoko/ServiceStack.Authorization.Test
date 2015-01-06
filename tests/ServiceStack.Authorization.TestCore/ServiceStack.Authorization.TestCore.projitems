@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)AuthorizationTestBase.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Tests\RoleTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Tests\RoleTestWithIAuthRepository.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Tests\RoleTestWithSecretKey.cs" />
   </ItemGroup>
 </Project>

@@ -1,11 +1,13 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="RoleTest.cs" company="ServiceStack.Authorization.Test">
+// <copyright file="RoleTestWithIAuthRepository.cs" company="ServiceStack.Authorization.Test">
 //   Copyright (c) ServiceStack.Authorization.Test contributors 2014
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace ServiceStack.Authorization.Test
 {
+    using System.Linq;
+
     using NUnit.Framework;
 
     using ServiceStack.Auth;
@@ -18,7 +20,7 @@ namespace ServiceStack.Authorization.Test
     /// The LightSpeed ORM ServiceStack Auth manage roles test.
     /// </summary>
     [TestFixture]
-    public class RoleTest : AuthorizationTestBase
+    public class RoleTestWithIAuthRepository : AuthorizationTestBase
     {
         /// <summary>
         /// The role name for testing.
@@ -47,10 +49,10 @@ namespace ServiceStack.Authorization.Test
             {
                 // Arrange
                 UserAuth userAuth;
-                AssignRolesResponse assignRolesResponse;
                 var newRegistration = CreateNewUserRegistration();
                 var request = new BasicRequest(newRegistration);
                 var response = (RegisterResponse)appHost.ExecuteService(newRegistration, request);
+                var authRepo = appHost.Resolve<IAuthRepository>();
 
                 // Test #1: Check role and permission assignment
                 // ---------------------------------------------
@@ -69,25 +71,23 @@ namespace ServiceStack.Authorization.Test
                         Permissions = { TestPermissionName },
                     };
 
-                // Assert #1.1: 
-                // Check AssignRoles response to contain roles and permissions
-                assignRolesResponse = (AssignRolesResponse)appHost.ExecuteService(assignRoleRequest, request);
-                Assert.That(assignRolesResponse.AllRoles[0], Is.EqualTo(TestRoleName));
-                Assert.That(assignRolesResponse.AllPermissions[0], Is.EqualTo(TestPermissionName));
+                userAuth = (UserAuth)authRepo.GetUserAuthByUserName(assignRoleRequest.UserName);
+                authRepo.AssignRoles(userAuth, assignRoleRequest.Roles, assignRoleRequest.Permissions);
 
-                // Assert #1.2: 
+                // Assert: 
                 // Check UserAuth to contain roles and permissions
+                Assert.That(authRepo.GetRoles(userAuth).FirstOrDefault(), Is.EqualTo(TestRoleName));
+                Assert.That(authRepo.GetPermissions(userAuth).FirstOrDefault(), Is.EqualTo(TestPermissionName));
+
+                // Test #2: Check role and permission un-assignment
+                // ------------------------------------------------
+                // Act
                 using (var db = DbConnFactory.Open())
                 {
                     // Hydrate userAuth
                     userAuth = db.SingleById<UserAuth>(response.UserId);
                 }
-                Assert.That(userAuth.Roles[0], Is.EqualTo(TestRoleName));
-                Assert.That(userAuth.Permissions[0], Is.EqualTo(TestPermissionName));
 
-                // Test #2: Check role and permission un-assignment
-                // ------------------------------------------------
-                // Act
                 var unassignRolesRequest =
                     new UnAssignRoles
                     {
@@ -95,17 +95,14 @@ namespace ServiceStack.Authorization.Test
                         Roles = { TestRoleName },
                         Permissions = { TestPermissionName },
                     };
-                appHost.ExecuteService(unassignRolesRequest, request);
+                
+                userAuth = (UserAuth)authRepo.GetUserAuthByUserName(assignRoleRequest.UserName);
+                authRepo.UnAssignRoles(userAuth, unassignRolesRequest.Roles, unassignRolesRequest.Permissions);
 
-                // Assert #2.1:
+                // Assert:
                 // Check UserAuth not to contain roles and permissions above
-                using (var db = DbConnFactory.Open())
-                {
-                    // Hydrate userAuth
-                    userAuth = db.SingleById<UserAuth>(response.UserId);
-                }
-                Assert.That(userAuth.Roles.Count, Is.EqualTo(0));
-                Assert.That(userAuth.Permissions.Count, Is.EqualTo(0));
+                Assert.That(authRepo.GetRoles(userAuth).FirstOrDefault(), Is.Null);
+                Assert.That(authRepo.GetPermissions(userAuth).FirstOrDefault(), Is.Null);
             }
         }
 
@@ -130,10 +127,10 @@ namespace ServiceStack.Authorization.Test
             {
                 // Arrange
                 UserAuth userAuth;
-                AssignRolesResponse assignRolesResponse;
                 var newRegistration = CreateNewUserRegistration();
                 var request = new BasicRequest(newRegistration);
                 var response = (RegisterResponse)appHost.ExecuteService(newRegistration, request);
+                var authRepo = appHost.Resolve<IAuthRepository>();
 
                 // Test #1: Check role and permission assignment
                 // ---------------------------------------------
@@ -152,26 +149,23 @@ namespace ServiceStack.Authorization.Test
                         Permissions = { TestPermissionName },
                     };
 
-                // Assert #1.1: 
-                // Check AssignRoles response to contain roles and permissions
-                assignRolesResponse = (AssignRolesResponse)appHost.ExecuteService(assignRoleRequest, request);
-                Assert.That(assignRolesResponse.AllRoles[0], Is.EqualTo(TestRoleName));
-                Assert.That(assignRolesResponse.AllPermissions[0], Is.EqualTo(TestPermissionName));
+                userAuth = (UserAuth)authRepo.GetUserAuthByUserName(assignRoleRequest.UserName);
+                authRepo.AssignRoles(userAuth, assignRoleRequest.Roles, assignRoleRequest.Permissions);
 
-                // Assert #1.2: 
-                // Check that roles and permissions are not persisted to UserAuth table
-                Assert.That(userAuth.Roles.Count, Is.EqualTo(0));
-                Assert.That(userAuth.Permissions.Count, Is.EqualTo(0));
-
-                // Assert #1.3:
-                // Check UserRoles table to contain roles and permissions
-                var manageRoles = (IManageRoles)appHost.Container.Resolve<IAuthRepository>();
-                Assert.That(manageRoles.HasRole(userAuth.Id.ToString(), TestRoleName));
-                Assert.That(manageRoles.HasPermission(userAuth.Id.ToString(), TestPermissionName));
+                // Assert: 
+                // Check UserAuth to contain roles and permissions
+                Assert.That(authRepo.GetRoles(userAuth).FirstOrDefault(), Is.EqualTo(TestRoleName));
+                Assert.That(authRepo.GetPermissions(userAuth).FirstOrDefault(), Is.EqualTo(TestPermissionName));
 
                 // Test #2: Check role and permission un-assignment
                 // ------------------------------------------------
                 // Act
+                using (var db = DbConnFactory.Open())
+                {
+                    // Hydrate userAuth
+                    userAuth = db.SingleById<UserAuth>(response.UserId);
+                }
+
                 var unassignRolesRequest =
                     new UnAssignRoles
                     {
@@ -179,12 +173,14 @@ namespace ServiceStack.Authorization.Test
                         Roles = { TestRoleName },
                         Permissions = { TestPermissionName },
                     };
-                appHost.ExecuteService(unassignRolesRequest, request);
 
-                // Assert #2.1:
-                // Check UserRole table not to contain roles and permissions above
-                Assert.That(!manageRoles.HasRole(userAuth.Id.ToString(), TestRoleName));
-                Assert.That(!manageRoles.HasPermission(userAuth.Id.ToString(), TestPermissionName));
+                userAuth = (UserAuth)authRepo.GetUserAuthByUserName(assignRoleRequest.UserName);
+                authRepo.UnAssignRoles(userAuth, unassignRolesRequest.Roles, unassignRolesRequest.Permissions);
+
+                // Assert:
+                // Check UserAuth not to contain roles and permissions above
+                Assert.That(authRepo.GetRoles(userAuth).FirstOrDefault(), Is.Null);
+                Assert.That(authRepo.GetPermissions(userAuth).FirstOrDefault(), Is.Null);
             }
         }
     }
